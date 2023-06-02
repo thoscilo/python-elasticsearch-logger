@@ -184,6 +184,18 @@ class CMRESHandlerTestCase(unittest.TestCase):
             CMRESHandler._get_yearly_index_name(index_name)
         )
 
+        handler = CMRESHandler(hosts=[{'host': self.getESHost(),
+                                       'port': self.getESPort(),
+                                       'scheme': self.get_ES_scheme()}],
+                               auth_type=CMRESHandler.AuthType.NO_AUTH,
+                               es_index_name=index_name,
+                               index_name_frequency=CMRESHandler.IndexNameFrequency.NONE,
+                               raise_on_indexing_exceptions=True)
+        self.assertEqual(
+            handler._index_name_func.__func__(index_name),
+            CMRESHandler._get_base_index_name(index_name)
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
