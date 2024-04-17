@@ -80,7 +80,6 @@ class CMRESHandler(logging.Handler):
     __DEFAULT_FLUSH_FREQ_INSEC = 1
     __DEFAULT_ADDITIONAL_FIELDS = {}
     __DEFAULT_ES_INDEX_NAME = 'python_logger'
-    __DEFAULT_ES_DOC_TYPE = 'python_log'
     __DEFAULT_RAISE_ON_EXCEPTION = False
     __DEFAULT_TIMESTAMP_FIELD_NAME = "timestamp"
 
@@ -151,7 +150,6 @@ class CMRESHandler(logging.Handler):
                  flush_frequency_in_sec=__DEFAULT_FLUSH_FREQ_INSEC,
                  es_index_name=__DEFAULT_ES_INDEX_NAME,
                  index_name_frequency=__DEFAULT_INDEX_FREQUENCY,
-                 es_doc_type=__DEFAULT_ES_DOC_TYPE,
                  es_additional_fields=__DEFAULT_ADDITIONAL_FIELDS,
                  raise_on_indexing_exceptions=__DEFAULT_RAISE_ON_EXCEPTION,
                  default_timestamp_field_name=__DEFAULT_TIMESTAMP_FIELD_NAME):
@@ -183,8 +181,6 @@ class CMRESHandler(logging.Handler):
                     are selected from the IndexNameFrequency class (IndexNameFrequency.DAILY,
                     IndexNameFrequency.WEEKLY, IndexNameFrequency.MONTHLY, IndexNameFrequency.YEARLY). By default
                     it uses daily indices.
-        :param es_doc_type: A string with the name of the document type that will be used ```python_log``` used
-                    by default
         :param es_additional_fields: A dictionary with all the additional fields that you would like to add
                     to the logs, such the application, environment, etc.
         :param raise_on_indexing_exceptions: A boolean, True only for debugging purposes to raise exceptions
@@ -204,7 +200,6 @@ class CMRESHandler(logging.Handler):
         self.flush_frequency_in_sec = flush_frequency_in_sec
         self.es_index_name = es_index_name
         self.index_name_frequency = index_name_frequency
-        self.es_doc_type = es_doc_type
         self.es_additional_fields = es_additional_fields.copy()
         self.es_additional_fields.update({'host': socket.gethostname(),
                                           'host_ip': socket.gethostbyname(socket.gethostname())})
@@ -315,7 +310,6 @@ class CMRESHandler(logging.Handler):
                 actions = (
                     {
                         '_index': self._index_name_func.__func__(self.es_index_name),
-                        '_type': self.es_doc_type,
                         '_source': log_record
                     }
                     for log_record in logs_buffer
