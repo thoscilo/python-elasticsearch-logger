@@ -307,17 +307,12 @@ class CMRESHandler(logging.Handler):
                 with self._buffer_lock:
                     logs_buffer = self._buffer
                     self._buffer = []
-                actions = (
-                    {
-                        '_index': self._index_name_func.__func__(self.es_index_name),
-                        '_source': log_record
-                    }
-                    for log_record in logs_buffer
-                )
+
                 eshelpers.bulk(
                     client=self.__get_es_client(),
-                    actions=actions,
-                    stats_only=True
+                    actions=logs_buffer,
+                    stats_only=True,
+                    index=self._index_name_func.__func__(self.es_index_name)
                 )
             except Exception as exception:
                 if self.raise_on_indexing_exceptions:
